@@ -1,8 +1,9 @@
-const CACHE = 'journal-v1'
+const CACHE = 'journal-v2'
 
 self.addEventListener('install', e => {
+  self.skipWaiting()
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(['./journal.html', './icon.svg', './manifest.json']))
+    caches.open(CACHE).then(c => c.addAll(['./journal.html', './manifest.json']))
   )
 })
 
@@ -12,6 +13,7 @@ self.addEventListener('activate', e => {
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
     )
   )
+  self.clients.claim()
 })
 
 self.addEventListener('fetch', e => {
