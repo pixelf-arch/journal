@@ -658,7 +658,6 @@ html, body {
       </div>
     </div>
     <p class="welcome-note">Hope you enjoy writing daily. Reach out if you have any feedback.</p>
-    <button class="setup-btn" id="welcome-btn">Choose a Folder</button>
   </div>
 
   <!-- Setup overlay -->
@@ -1312,33 +1311,13 @@ document.getElementById('todo-input').addEventListener('keydown', async e => {
 
 // ── Init ───────────────────────────────────────────────────────────────────
 
-let installPrompt = null
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault()
-  installPrompt = e
-  const btn = document.getElementById('welcome-btn')
-  if (btn) btn.textContent = 'Install the App'
-})
-
-if (localStorage.getItem('journal-welcomed')) {
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  localStorage.setItem('journal-welcomed', '1')
+  init()
+} else if (localStorage.getItem('journal-welcomed')) {
   init()
 } else {
   document.getElementById('welcome-overlay').classList.remove('hidden')
-  document.getElementById('welcome-btn').addEventListener('click', async () => {
-    localStorage.setItem('journal-welcomed', '1')
-    if (installPrompt) {
-      installPrompt.prompt()
-      const { outcome } = await installPrompt.userChoice
-      installPrompt = null
-      if (outcome === 'dismissed') {
-        document.getElementById('welcome-overlay').classList.add('hidden')
-        init()
-      }
-    } else {
-      document.getElementById('welcome-overlay').classList.add('hidden')
-      init()
-    }
-  })
 }
 
 if ('serviceWorker' in navigator) {
