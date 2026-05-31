@@ -1312,14 +1312,32 @@ document.getElementById('todo-input').addEventListener('keydown', async e => {
 
 // ── Init ───────────────────────────────────────────────────────────────────
 
+let installPrompt = null
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault()
+  installPrompt = e
+  const btn = document.getElementById('welcome-btn')
+  if (btn) btn.textContent = 'Install the App'
+})
+
 if (localStorage.getItem('journal-welcomed')) {
   init()
 } else {
   document.getElementById('welcome-overlay').classList.remove('hidden')
-  document.getElementById('welcome-btn').addEventListener('click', () => {
+  document.getElementById('welcome-btn').addEventListener('click', async () => {
     localStorage.setItem('journal-welcomed', '1')
-    document.getElementById('welcome-overlay').classList.add('hidden')
-    init()
+    if (installPrompt) {
+      installPrompt.prompt()
+      const { outcome } = await installPrompt.userChoice
+      installPrompt = null
+      if (outcome === 'dismissed') {
+        document.getElementById('welcome-overlay').classList.add('hidden')
+        init()
+      }
+    } else {
+      document.getElementById('welcome-overlay').classList.add('hidden')
+      init()
+    }
   })
 }
 
