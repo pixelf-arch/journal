@@ -1236,12 +1236,23 @@ document.getElementById('todo-input').addEventListener('keydown', async e => {
 // ── PWA install prompt ─────────────────────────────────────────────────────
 
 let deferredInstallPrompt = null
+let installPromptFired = false
 
 window.addEventListener('beforeinstallprompt', (e) => {
+  installPromptFired = true
   e.preventDefault()
   deferredInstallPrompt = e
   document.getElementById('welcome-install-btn').classList.remove('hidden')
 })
+
+// If install prompt doesn't fire (already installed or unsupported), go to folder picker
+setTimeout(() => {
+  if (!installPromptFired && !document.getElementById('welcome-overlay').classList.contains('hidden')) {
+    document.getElementById('welcome-overlay').classList.add('hidden')
+    document.getElementById('setup-overlay').classList.remove('hidden')
+    document.getElementById('setup-btn').onclick = chooseFolder
+  }
+}, 1000)
 
 document.getElementById('welcome-install-btn').addEventListener('click', async () => {
   if (!deferredInstallPrompt) return
