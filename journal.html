@@ -55,27 +55,6 @@ html, body {
 }
 
 /* ── Setup overlay ─────────────────────────────────────────────────── */
-#welcome-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1001;
-  padding: 40px;
-  box-sizing: border-box;
-}
-#welcome-overlay.hidden { display: none; }
-.welcome-intro {
-  font-size: 16px;
-  color: var(--text-muted);
-  text-align: center;
-  line-height: 1.7;
-  max-width: 340px;
-  margin-bottom: 32px;
-}
 
 #setup-overlay {
   position: fixed;
@@ -567,13 +546,6 @@ html, body {
 </head>
 <body>
 
-  <!-- Welcome screen -->
-  <div id="welcome-overlay" class="hidden">
-    <h1 class="setup-title">Journal</h1>
-    <p class="welcome-intro">A quiet space for writing and to-dos. Everything stays on your computer — nothing is ever uploaded or shared.</p>
-    <button class="setup-btn hidden" id="welcome-install-btn">Install the app</button>
-  </div>
-
   <!-- Setup overlay -->
   <div id="setup-overlay" class="hidden">
     <h1 class="setup-title">Journal</h1>
@@ -850,10 +822,6 @@ async function init() {
     document.getElementById('setup-btn').onclick = reconnect
   } else {
     document.getElementById('setup-overlay').classList.remove('hidden')
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      document.getElementById('setup-msg').textContent =
-        'Your app is installed. Now choose a folder where your entries will be saved.'
-    }
     document.getElementById('setup-btn').onclick = chooseFolder
   }
 }
@@ -867,11 +835,7 @@ async function chooseFolder() {
   try {
     dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' })
     await saveHandle(dirHandle)
-    document.getElementById('setup-msg').textContent =
-      "Your folder was selected. If you'd like this app to open at login, right-click it in your Dock → Options → Open at Login."
-    document.getElementById('setup-folder').textContent = dirHandle.name
-    document.getElementById('setup-btn').textContent = 'Open Journal'
-    document.getElementById('setup-btn').onclick = startApp
+    startApp()
   } catch (err) {
     if (err.name !== 'AbortError') {
       document.getElementById('setup-msg').textContent =
@@ -1233,53 +1197,9 @@ document.getElementById('todo-input').addEventListener('keydown', async e => {
   e.target.value = ''
 })
 
-// ── PWA install prompt ─────────────────────────────────────────────────────
-
-let deferredInstallPrompt = null
-let installPromptFired = false
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  installPromptFired = true
-  e.preventDefault()
-  deferredInstallPrompt = e
-  document.getElementById('welcome-install-btn').classList.remove('hidden')
-})
-
-// If install prompt doesn't fire (already installed or unsupported), go to folder picker
-setTimeout(() => {
-  if (!installPromptFired && !document.getElementById('welcome-overlay').classList.contains('hidden')) {
-    document.getElementById('welcome-overlay').classList.add('hidden')
-    document.getElementById('setup-overlay').classList.remove('hidden')
-    document.getElementById('setup-btn').onclick = chooseFolder
-  }
-}, 1000)
-
-document.getElementById('welcome-install-btn').addEventListener('click', async () => {
-  if (!deferredInstallPrompt) return
-  deferredInstallPrompt.prompt()
-  const { outcome } = await deferredInstallPrompt.userChoice
-  deferredInstallPrompt = null
-  if (outcome === 'accepted') {
-    document.getElementById('welcome-overlay').classList.add('hidden')
-    document.getElementById('setup-overlay').classList.remove('hidden')
-    document.getElementById('setup-msg').textContent =
-      'App installed. Now choose a folder where your entries will be saved.'
-    document.getElementById('setup-btn').onclick = chooseFolder
-  } else {
-    document.getElementById('welcome-install-btn').classList.add('hidden')
-  }
-})
-
 // ── Init ───────────────────────────────────────────────────────────────────
 
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  localStorage.setItem('journal-welcomed', '1')
-  init()
-} else if (localStorage.getItem('journal-welcomed')) {
-  init()
-} else {
-  document.getElementById('welcome-overlay').classList.remove('hidden')
-}
+init()
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js')
