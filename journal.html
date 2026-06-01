@@ -123,6 +123,14 @@ html, body {
   margin-bottom: 28px;
   font-style: italic;
 }
+.welcome-success {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.65;
+  max-width: 300px;
+  margin-top: 16px;
+}
 
 #setup-overlay {
   position: fixed;
@@ -658,6 +666,8 @@ html, body {
       </div>
     </div>
     <p class="welcome-note">Hope you enjoy writing daily. Reach out if you have any feedback.</p>
+    <button class="setup-btn" id="welcome-folder-btn">Choose Folder</button>
+    <p class="welcome-success hidden" id="welcome-success"></p>
   </div>
 
   <!-- Setup overlay -->
@@ -1307,6 +1317,31 @@ document.getElementById('todo-input').addEventListener('keydown', async e => {
   await writeTodos(todos)
   renderTodos()
   e.target.value = ''
+})
+
+// ── Welcome folder pick ────────────────────────────────────────────────────
+
+document.getElementById('welcome-folder-btn').addEventListener('click', async () => {
+  if (!window.showDirectoryPicker) {
+    document.getElementById('welcome-success').textContent =
+      "Your browser doesn't support folder access. Please open this in Chrome or Edge."
+    document.getElementById('welcome-success').classList.remove('hidden')
+    return
+  }
+  try {
+    dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' })
+    await saveHandle(dirHandle)
+    document.getElementById('welcome-folder-btn').classList.add('hidden')
+    document.getElementById('welcome-success').textContent =
+      `Folder "${dirHandle.name}" saved. Install the app using the ⊕ button in Chrome's address bar, then open it from your Dock.`
+    document.getElementById('welcome-success').classList.remove('hidden')
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      document.getElementById('welcome-success').textContent =
+        'Something went wrong. Try again, or make sure you\'re using Chrome or Edge.'
+      document.getElementById('welcome-success').classList.remove('hidden')
+    }
+  }
 })
 
 // ── Init ───────────────────────────────────────────────────────────────────
