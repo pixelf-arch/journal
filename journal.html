@@ -1246,13 +1246,17 @@ window.addEventListener('beforeinstallprompt', (e) => {
 document.getElementById('welcome-install-btn').addEventListener('click', async () => {
   if (!deferredInstallPrompt) return
   deferredInstallPrompt.prompt()
-  await deferredInstallPrompt.userChoice
+  const { outcome } = await deferredInstallPrompt.userChoice
   deferredInstallPrompt = null
-  document.getElementById('welcome-install-btn').classList.add('hidden')
-})
-
-window.addEventListener('appinstalled', () => {
-  window.close()
+  if (outcome === 'accepted') {
+    document.getElementById('welcome-overlay').classList.add('hidden')
+    document.getElementById('setup-overlay').classList.remove('hidden')
+    document.getElementById('setup-msg').textContent =
+      'App installed. Now choose a folder where your entries will be saved.'
+    document.getElementById('setup-btn').onclick = chooseFolder
+  } else {
+    document.getElementById('welcome-install-btn').classList.add('hidden')
+  }
 })
 
 // ── Init ───────────────────────────────────────────────────────────────────
