@@ -437,6 +437,233 @@ html, body {
 }
 .todo-date-header:first-child { padding-top: 6px; }
 
+/* ── Projects ──────────────────────────────────────────────────────── */
+#projects-cards-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+#projects-editor-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+.projects-top {
+  padding: 24px var(--pad) 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.btn-new-project {
+  background: none;
+  border: 1px solid var(--divider);
+  border-radius: 20px;
+  font-family: 'Esperanto', serif;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 5px 14px;
+  margin-bottom: 6px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.btn-new-project:hover { color: var(--text); border-color: var(--text-muted); }
+.new-project-form {
+  padding: 16px var(--pad) 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+}
+.new-project-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--divider);
+  padding: 10px 0;
+  font-family: 'Esperanto', serif;
+  font-size: 14.5px;
+  color: var(--text);
+  outline: none;
+  caret-color: var(--text);
+}
+.new-project-input::placeholder { color: var(--text-faint); font-style: italic; }
+.new-project-input:focus { border-bottom-color: var(--text-muted); }
+.new-project-actions {
+  display: flex;
+  gap: 10px;
+  padding: 12px 0 4px;
+}
+.new-project-create {
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 20px;
+  font-family: 'Esperanto', serif;
+  font-size: 11.5px;
+  padding: 5px 16px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.new-project-create:hover { opacity: 0.72; }
+.new-project-cancel {
+  background: none;
+  border: none;
+  font-family: 'Esperanto', serif;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 5px 0;
+  transition: color 0.15s;
+}
+.new-project-cancel:hover { color: var(--text); }
+#projects-grid {
+  padding: 20px var(--pad) var(--pad);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  overflow-y: auto;
+  flex: 1;
+  align-content: start;
+}
+.project-card {
+  background: #fff;
+  border: 1px solid var(--divider);
+  border-radius: 8px;
+  padding: 18px 18px 14px;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 110px;
+}
+.project-card:hover { border-color: var(--text-muted); }
+.project-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  padding-right: 16px;
+}
+.project-card-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  flex: 1;
+}
+.project-card-rule {
+  height: 1px;
+  background: var(--divider);
+  margin-top: auto;
+}
+.project-card-meta {
+  font-size: 10px;
+  font-family: 'Esperanto SC', serif;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+.project-card-del {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  font-size: 15px;
+  cursor: pointer;
+  padding: 2px 5px;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+  line-height: 1;
+}
+.project-card:hover .project-card-del { opacity: 1; }
+.project-card-del:hover { color: var(--text); }
+.projects-empty {
+  grid-column: 1 / -1;
+  padding: 48px 0;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-faint);
+  text-align: center;
+}
+.projects-editor-top {
+  padding: 16px var(--pad) 0;
+  flex-shrink: 0;
+}
+.projects-back-btn {
+  background: none;
+  border: none;
+  font-family: 'Esperanto', serif;
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+.projects-back-btn:hover { color: var(--text); }
+.projects-editor-name {
+  padding: 18px var(--pad) 0;
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.15;
+  flex-shrink: 0;
+}
+.projects-editor-ta {
+  flex: 1;
+  padding: 14px var(--pad) 80px;
+  overflow-y: auto;
+  outline: none;
+  font-family: 'Esperanto', serif;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--text);
+  caret-color: var(--text);
+  user-select: text;
+  -webkit-user-select: text;
+  word-break: break-word;
+}
+.projects-editor-ta:empty::before {
+  content: 'Start writing…';
+  color: var(--text-faint);
+  font-style: italic;
+  pointer-events: none;
+}
+.projects-editor-ta a {
+  color: #5A82B4;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.projects-editor-ta a:hover { opacity: 0.72; }
+#projects-editor-view { position: relative; }
+.link-prompt {
+  position: absolute;
+  width: 320px;
+  background: var(--bg);
+  border: 1px solid var(--text-muted);
+  border-radius: 6px;
+  padding: 10px 14px;
+  z-index: 10;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+}
+.link-prompt-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  font-family: 'Esperanto', serif;
+  font-size: 13.5px;
+  color: var(--text);
+  outline: none;
+  caret-color: var(--text);
+}
+.link-prompt-input::placeholder { color: var(--text-faint); font-style: italic; }
+
 /* ── Scrollbars ────────────────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -559,6 +786,7 @@ html, body {
     <div class="tabs">
       <button class="tab active" id="tab-journal">Journal</button>
       <button class="tab" id="tab-todos">To-dos</button>
+      <button class="tab" id="tab-projects">Projects</button>
     </div>
   </div>
 
@@ -627,6 +855,42 @@ html, body {
       <input class="add-todo-input" type="text" id="todo-input" placeholder="Add a task and press Enter…" autocomplete="off">
     </div>
     <div id="todos-list"></div>
+  </div>
+
+  <!-- Projects panel -->
+  <div class="panel hidden" id="panel-projects">
+
+    <!-- Cards view -->
+    <div id="projects-cards-view">
+      <div class="projects-top">
+        <span class="section-heading">Projects</span>
+        <button class="btn-new-project" id="btn-new-project">+ New project</button>
+      </div>
+      <div class="divider"></div>
+      <div class="new-project-form hidden" id="new-project-form">
+        <input class="new-project-input" type="text" id="new-project-name" placeholder="Project name" autocomplete="off">
+        <input class="new-project-input" type="text" id="new-project-desc" placeholder="Short description…" autocomplete="off">
+        <div class="new-project-actions">
+          <button class="new-project-create" id="new-project-create">Create</button>
+          <button class="new-project-cancel" id="new-project-cancel">Cancel</button>
+        </div>
+      </div>
+      <div id="projects-grid"></div>
+    </div>
+
+    <!-- Editor view -->
+    <div class="hidden" id="projects-editor-view">
+      <div class="projects-editor-top">
+        <button class="projects-back-btn" id="btn-projects-back">← Projects</button>
+      </div>
+      <div class="divider"></div>
+      <div class="projects-editor-name" id="projects-editor-name"></div>
+      <div class="projects-editor-ta" id="projects-editor-ta" contenteditable="true" spellcheck="true"></div>
+      <div class="link-prompt hidden" id="link-prompt">
+        <input class="link-prompt-input" type="text" id="link-prompt-input" placeholder="Paste or type a URL, then press Enter…" autocomplete="off">
+      </div>
+    </div>
+
   </div>
 
   <!-- Entries overlay -->
@@ -855,6 +1119,7 @@ async function startApp() {
   document.getElementById('setup-overlay').classList.add('hidden')
   await loadEntry(TODAY)
   await loadTodos()
+  await loadProjects()
   const saved = await readHeading()
   if (saved) document.getElementById('express-heading').textContent = saved
 }
@@ -878,13 +1143,16 @@ expressHeading.addEventListener('blur', async () => {
 function switchTab(name) {
   document.getElementById('tab-journal').classList.toggle('active', name === 'journal')
   document.getElementById('tab-todos').classList.toggle('active', name === 'todos')
+  document.getElementById('tab-projects').classList.toggle('active', name === 'projects')
   document.getElementById('panel-journal').classList.toggle('hidden', name !== 'journal')
   document.getElementById('panel-todos').classList.toggle('hidden', name !== 'todos')
+  document.getElementById('panel-projects').classList.toggle('hidden', name !== 'projects')
   closeAllSubPanels()
 }
 
 document.getElementById('tab-journal').addEventListener('click', () => switchTab('journal'))
 document.getElementById('tab-todos').addEventListener('click',   () => switchTab('todos'))
+document.getElementById('tab-projects').addEventListener('click', () => switchTab('projects'))
 
 // ── Journal ────────────────────────────────────────────────────────────────
 
@@ -1054,6 +1322,7 @@ async function openEntriesOverlay() {
   list.innerHTML = '<div class="entries-overlay-loading">Loading…</div>'
 
   const entries = await listEntries()
+  if (!entries.includes(TODAY)) entries.unshift(TODAY)
   const previews = await Promise.all(entries.map(d => getEntryPreview(d)))
   const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
 
@@ -1196,6 +1465,229 @@ document.getElementById('todo-input').addEventListener('keydown', async e => {
   renderTodos()
   e.target.value = ''
 })
+
+// ── Projects ───────────────────────────────────────────────────────────────
+
+let projects = []
+let projectSaveTimer = null
+let currentProjectId = null
+
+async function readProjects() {
+  try {
+    const fh = await dirHandle.getFileHandle('projects.json')
+    return JSON.parse(await (await fh.getFile()).text())
+  } catch { return [] }
+}
+
+async function writeProjects(p) {
+  const fh = await dirHandle.getFileHandle('projects.json', { create: true })
+  const w = await fh.createWritable()
+  await w.write(JSON.stringify(p, null, 2))
+  await w.close()
+}
+
+async function loadProjects() {
+  projects = await readProjects()
+  renderProjectCards()
+}
+
+function renderProjectCards() {
+  const grid = document.getElementById('projects-grid')
+  if (!projects.length) {
+    grid.innerHTML = '<div class="projects-empty">No projects yet.</div>'
+    return
+  }
+  grid.innerHTML = projects.map(p => `
+    <div class="project-card" data-id="${p.id}">
+      <div class="project-card-name">${escHtml(p.name)}</div>
+      ${p.description ? `<div class="project-card-desc">${escHtml(p.description)}</div>` : ''}
+      <div class="project-card-rule"></div>
+      <div class="project-card-meta">${p.updatedAt ? parseDisplayDate(p.updatedAt) : ''}</div>
+      <button class="project-card-del" data-id="${p.id}" title="Delete">&#215;</button>
+    </div>`).join('')
+  grid.querySelectorAll('.project-card').forEach(el => {
+    el.addEventListener('click', e => {
+      if (e.target.closest('.project-card-del')) return
+      openProjectEditor(el.dataset.id)
+    })
+  })
+  grid.querySelectorAll('.project-card-del').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation()
+      deleteProject(btn.dataset.id)
+    })
+  })
+}
+
+async function deleteProject(id) {
+  projects = projects.filter(p => p.id !== id)
+  await writeProjects(projects)
+  renderProjectCards()
+}
+
+function openProjectEditor(id) {
+  currentProjectId = id
+  const p = projects.find(p => p.id === id)
+  if (!p) return
+  document.getElementById('projects-cards-view').classList.add('hidden')
+  document.getElementById('projects-editor-view').classList.remove('hidden')
+  document.getElementById('projects-editor-name').textContent = p.name
+  document.getElementById('projects-editor-ta').innerHTML = p.content || ''
+  document.getElementById('projects-editor-ta').focus()
+}
+
+function closeProjectEditor() {
+  clearTimeout(projectSaveTimer)
+  currentProjectId = null
+  document.getElementById('projects-editor-view').classList.add('hidden')
+  document.getElementById('projects-cards-view').classList.remove('hidden')
+}
+
+document.getElementById('btn-projects-back').addEventListener('click', closeProjectEditor)
+
+function linkifyText(text) {
+  const urlRe = /(https?:\/\/[^\s]+)/g
+  const parts = text.split(urlRe)
+  return parts.map((part, i) => {
+    if (i % 2 === 1) return `<a href="${escHtml(part)}" target="_blank" rel="noopener noreferrer">${escHtml(part)}</a>`
+    return escHtml(part).replace(/\n/g, '<br>')
+  }).join('')
+}
+
+document.getElementById('projects-editor-ta').addEventListener('paste', e => {
+  e.preventDefault()
+  const text = (e.clipboardData || window.clipboardData).getData('text/plain')
+  document.execCommand('insertHTML', false, linkifyText(text))
+})
+
+let savedLinkRange = null
+
+function openLinkPrompt() {
+  const sel = window.getSelection()
+  savedLinkRange = sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null
+
+  const prompt = document.getElementById('link-prompt')
+  prompt.classList.remove('hidden')
+
+  if (savedLinkRange) {
+    const selRect = savedLinkRange.getBoundingClientRect()
+    const editorRect = document.getElementById('projects-editor-view').getBoundingClientRect()
+    const promptW = 320
+    const promptH = 44
+
+    let top = selRect.bottom - editorRect.top + 8
+    let left = selRect.left - editorRect.left
+
+    // clamp so it doesn't overflow right edge
+    left = Math.min(Math.max(left, 16), editorRect.width - promptW - 16)
+
+    // if it would go off the bottom, flip above the selection
+    if (top + promptH > editorRect.height - 8) {
+      top = selRect.top - editorRect.top - promptH - 8
+    }
+
+    prompt.style.top = top + 'px'
+    prompt.style.left = left + 'px'
+  }
+
+  document.getElementById('link-prompt-input').value = ''
+  document.getElementById('link-prompt-input').focus()
+}
+
+function closeLinkPrompt() {
+  document.getElementById('link-prompt').classList.add('hidden')
+  savedLinkRange = null
+}
+
+function confirmLink() {
+  const raw = document.getElementById('link-prompt-input').value.trim()
+  if (!raw) { closeLinkPrompt(); return }
+  const href = /^https?:\/\//.test(raw) ? raw : 'https://' + raw
+  if (savedLinkRange) {
+    const ta = document.getElementById('projects-editor-ta')
+    ta.focus()
+    const sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(savedLinkRange)
+    const a = document.createElement('a')
+    a.href = href
+    a.target = '_blank'
+    a.rel = 'noopener noreferrer'
+    const selectedText = savedLinkRange.toString()
+    if (selectedText) {
+      a.appendChild(savedLinkRange.extractContents())
+    } else {
+      a.textContent = href
+    }
+    savedLinkRange.insertNode(a)
+    sel.collapseToEnd()
+  }
+  closeLinkPrompt()
+}
+
+document.getElementById('link-prompt-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); confirmLink() }
+  if (e.key === 'Escape') { closeLinkPrompt(); document.getElementById('projects-editor-ta').focus() }
+})
+
+document.getElementById('projects-editor-ta').addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openLinkPrompt() }
+})
+
+document.getElementById('projects-editor-ta').addEventListener('click', e => {
+  const link = e.target.closest('a')
+  if (link && (e.metaKey || e.ctrlKey)) {
+    e.preventDefault()
+    window.open(link.href, '_blank', 'noopener,noreferrer')
+  }
+})
+
+document.getElementById('projects-editor-ta').addEventListener('input', () => {
+  clearTimeout(projectSaveTimer)
+  projectSaveTimer = setTimeout(async () => {
+    const p = projects.find(p => p.id === currentProjectId)
+    if (!p) return
+    p.content = document.getElementById('projects-editor-ta').innerHTML
+    p.updatedAt = toDateStr(new Date())
+    await writeProjects(projects)
+    renderProjectCards()
+  }, 800)
+})
+
+document.getElementById('btn-new-project').addEventListener('click', () => {
+  const form = document.getElementById('new-project-form')
+  form.classList.remove('hidden')
+  document.getElementById('new-project-name').focus()
+})
+
+document.getElementById('new-project-cancel').addEventListener('click', () => {
+  document.getElementById('new-project-form').classList.add('hidden')
+  document.getElementById('new-project-name').value = ''
+  document.getElementById('new-project-desc').value = ''
+})
+
+document.getElementById('new-project-create').addEventListener('click', createProject)
+
+document.getElementById('new-project-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('new-project-desc').focus()
+})
+
+document.getElementById('new-project-desc').addEventListener('keydown', e => {
+  if (e.key === 'Enter') createProject()
+})
+
+async function createProject() {
+  const name = document.getElementById('new-project-name').value.trim()
+  if (!name) return
+  const description = document.getElementById('new-project-desc').value.trim()
+  const p = { id: Date.now().toString(), name, description, content: '', updatedAt: toDateStr(new Date()) }
+  projects.unshift(p)
+  await writeProjects(projects)
+  renderProjectCards()
+  document.getElementById('new-project-form').classList.add('hidden')
+  document.getElementById('new-project-name').value = ''
+  document.getElementById('new-project-desc').value = ''
+}
 
 // ── Init ───────────────────────────────────────────────────────────────────
 
