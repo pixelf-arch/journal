@@ -1273,11 +1273,19 @@ function toggleProjectSubheading() {
   if (!sel || sel.isCollapsed) return
   const range = sel.getRangeAt(0)
   const ta = document.getElementById('projects-editor-ta')
-  const startSpan = findProjSubheadingSpan(range.startContainer, ta)
-  const endSpan   = findProjSubheadingSpan(range.endContainer, ta)
-  if (startSpan || endSpan) {
-    if (startSpan) unwrapSpan(startSpan)
-    if (endSpan && endSpan !== startSpan) unwrapSpan(endSpan)
+
+  // Collect spans via two strategies: walking up from endpoints (handles
+  // selection inside a span) and scanning children (handles selection around
+  // or overlapping a span after surroundContents repositions the range).
+  const toRemove = new Set()
+  const up1 = findProjSubheadingSpan(range.startContainer, ta)
+  const up2 = findProjSubheadingSpan(range.endContainer, ta)
+  if (up1) toRemove.add(up1)
+  if (up2) toRemove.add(up2)
+  ta.querySelectorAll('.proj-subheading').forEach(s => { if (range.intersectsNode(s)) toRemove.add(s) })
+
+  if (toRemove.size > 0) {
+    toRemove.forEach(s => unwrapSpan(s))
     ta.normalize()
   } else {
     const span = document.createElement('span')
