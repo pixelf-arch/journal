@@ -641,6 +641,7 @@ html, body {
   cursor: pointer;
 }
 .projects-editor-ta a:hover { opacity: 0.72; }
+.projects-editor-ta .proj-subheading { font-size: 1.35em; font-weight: 600; }
 #projects-editor-view { position: relative; }
 .link-prompt {
   position: absolute;
@@ -843,6 +844,13 @@ html, body {
 
   <div class="format-toolbar hidden" id="format-toolbar">
     <button class="format-btn" id="btn-subheading">Subheading</button>
+  </div>
+
+  <div class="format-toolbar hidden" id="projects-format-toolbar">
+    <button class="format-btn" id="proj-btn-bold">Bold</button>
+    <button class="format-btn" id="proj-btn-italic">Italic</button>
+    <button class="format-btn" id="proj-btn-subheading">Subheading</button>
+    <button class="format-btn" id="proj-btn-link">Link</button>
   </div>
 
   <!-- To-dos panel -->
@@ -1242,16 +1250,65 @@ function toggleSubheading() {
   ta.dispatchEvent(new Event('input'))
 }
 
-document.addEventListener('selectionchange', () => {
-  const sel = window.getSelection()
-  const toolbar = document.getElementById('format-toolbar')
-  const ta = document.getElementById('journal-textarea')
-  if (!sel || sel.isCollapsed || !ta.contains(sel.anchorNode)) {
-    toolbar.classList.add('hidden'); return
+function findProjSubheadingSpan(node, ta) {
+  let el = node.nodeType === 3 ? node.parentElement : node
+  while (el && el !== ta) {
+    if (el.classList && el.classList.contains('proj-subheading')) return el
+    el = el.parentElement
   }
+  return null
+}
+
+function findLinkAncestor(node, ta) {
+  let el = node.nodeType === 3 ? node.parentElement : node
+  while (el && el !== ta) {
+    if (el.tagName === 'A') return el
+    el = el.parentElement
+  }
+  return null
+}
+
+function toggleProjectSubheading() {
+  const sel = window.getSelection()
+  if (!sel || sel.isCollapsed) return
   const range = sel.getRangeAt(0)
+  const ta = document.getElementById('projects-editor-ta')
+  const startSpan = findProjSubheadingSpan(range.startContainer, ta)
+  const endSpan   = findProjSubheadingSpan(range.endContainer, ta)
+  if (startSpan || endSpan) {
+    if (startSpan) unwrapSpan(startSpan)
+    if (endSpan && endSpan !== startSpan) unwrapSpan(endSpan)
+    ta.normalize()
+  } else {
+    const span = document.createElement('span')
+    span.className = 'proj-subheading'
+    try { range.surroundContents(span) }
+    catch {
+      const fragment = range.extractContents()
+      span.appendChild(fragment)
+      range.insertNode(span)
+    }
+  }
+  ta.dispatchEvent(new Event('input'))
+}
+
+function toggleProjectLink() {
+  const sel = window.getSelection()
+  if (!sel || sel.isCollapsed) return
+  const ta = document.getElementById('projects-editor-ta')
+  const link = findLinkAncestor(sel.anchorNode, ta)
+  if (link) {
+    unwrapSpan(link)
+    ta.normalize()
+    ta.dispatchEvent(new Event('input'))
+  } else {
+    openLinkPrompt()
+  }
+}
+
+function positionToolbar(toolbar, range) {
   const rect = range.getBoundingClientRect()
-  if (!rect.width) { toolbar.classList.add('hidden'); return }
+  if (!rect.width) { toolbar.classList.add('hidden'); return false }
   toolbar.style.visibility = 'hidden'
   toolbar.classList.remove('hidden')
   const tw = toolbar.offsetWidth
@@ -1263,12 +1320,61 @@ document.addEventListener('selectionchange', () => {
   toolbar.style.top  = `${top}px`
   toolbar.style.left = `${left}px`
   toolbar.style.visibility = ''
-  document.getElementById('btn-subheading').classList.toggle('active', !!findSubheadingSpan(sel.anchorNode, ta))
+  return true
+}
+
+document.addEventListener('selectionchange', () => {
+  const sel = window.getSelection()
+
+  const journalToolbar = document.getElementById('format-toolbar')
+  const journalTa = document.getElementById('journal-textarea')
+  if (!sel || sel.isCollapsed || !journalTa.contains(sel.anchorNode)) {
+    journalToolbar.classList.add('hidden')
+  } else {
+    if (positionToolbar(journalToolbar, sel.getRangeAt(0))) {
+      document.getElementById('btn-subheading').classList.toggle('active', !!findSubheadingSpan(sel.anchorNode, journalTa))
+    }
+  }
+
+  const projToolbar = document.getElementById('projects-format-toolbar')
+  const projTa = document.getElementById('projects-editor-ta')
+  if (!sel || sel.isCollapsed || !projTa.contains(sel.anchorNode)) {
+    projToolbar.classList.add('hidden')
+  } else {
+    if (positionToolbar(projToolbar, sel.getRangeAt(0))) {
+      document.getElementById('proj-btn-bold').classList.toggle('active', document.queryCommandState('bold'))
+      document.getElementById('proj-btn-italic').classList.toggle('active', document.queryCommandState('italic'))
+      document.getElementById('proj-btn-subheading').classList.toggle('active', !!findProjSubheadingSpan(sel.anchorNode, projTa))
+      document.getElementById('proj-btn-link').classList.toggle('active', !!findLinkAncestor(sel.anchorNode, projTa))
+    }
+  }
 })
 
 document.getElementById('btn-subheading').addEventListener('mousedown', e => {
   e.preventDefault()
   toggleSubheading()
+})
+
+document.getElementById('proj-btn-bold').addEventListener('mousedown', e => {
+  e.preventDefault()
+  document.execCommand('bold')
+  document.getElementById('projects-editor-ta').dispatchEvent(new Event('input'))
+})
+
+document.getElementById('proj-btn-italic').addEventListener('mousedown', e => {
+  e.preventDefault()
+  document.execCommand('italic')
+  document.getElementById('projects-editor-ta').dispatchEvent(new Event('input'))
+})
+
+document.getElementById('proj-btn-subheading').addEventListener('mousedown', e => {
+  e.preventDefault()
+  toggleProjectSubheading()
+})
+
+document.getElementById('proj-btn-link').addEventListener('mousedown', e => {
+  e.preventDefault()
+  toggleProjectLink()
 })
 
 // ── Search ─────────────────────────────────────────────────────────────────
