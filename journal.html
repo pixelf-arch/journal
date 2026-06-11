@@ -1650,8 +1650,21 @@ function openProjectEditor(id) {
   document.getElementById('projects-editor-ta').focus()
 }
 
+async function saveCurrentProject() {
+  const p = projects.find(p => p.id === currentProjectId)
+  if (!p) return
+  p.content = document.getElementById('projects-editor-ta').innerHTML
+  p.updatedAt = toDateStr(new Date())
+  await writeProjects(projects)
+  renderProjectCards()
+}
+
 function closeProjectEditor() {
-  clearTimeout(projectSaveTimer)
+  if (projectSaveTimer) {
+    clearTimeout(projectSaveTimer)
+    projectSaveTimer = null
+    saveCurrentProject()
+  }
   currentProjectId = null
   document.getElementById('projects-editor-view').classList.add('hidden')
   document.getElementById('projects-cards-view').classList.remove('hidden')
@@ -1735,6 +1748,7 @@ function confirmLink() {
     }
     savedLinkRange.insertNode(a)
     sel.collapseToEnd()
+    ta.dispatchEvent(new Event('input'))
   }
   closeLinkPrompt()
 }
@@ -1758,14 +1772,7 @@ document.getElementById('projects-editor-ta').addEventListener('click', e => {
 
 document.getElementById('projects-editor-ta').addEventListener('input', () => {
   clearTimeout(projectSaveTimer)
-  projectSaveTimer = setTimeout(async () => {
-    const p = projects.find(p => p.id === currentProjectId)
-    if (!p) return
-    p.content = document.getElementById('projects-editor-ta').innerHTML
-    p.updatedAt = toDateStr(new Date())
-    await writeProjects(projects)
-    renderProjectCards()
-  }, 800)
+  projectSaveTimer = setTimeout(saveCurrentProject, 800)
 })
 
 document.getElementById('btn-new-project').addEventListener('click', () => {
